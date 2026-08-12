@@ -1,0 +1,29 @@
+spring:
+  autoconfigure:
+    exclude: org.springframework.boot.security.autoconfigure.UserDetailsServiceAutoConfiguration
+  application:
+    name: distribution-service
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+
+server:
+  port: ${DISTRIBUTION_SERVICE_PORT:8082}
+
+app:
+  frontend-url: ${PUBLIC_FRONTEND_URL:http://localhost}
+  room-service-url: ${ROOM_SERVICE_URL:http://localhost:8081}
+  internal-realtime-token: ${INTERNAL_REALTIME_TOKEN}
+
+management:
+  server:
+    port: ${MANAGEMENT_PORT:9082}
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      probes:
+        enabled: true

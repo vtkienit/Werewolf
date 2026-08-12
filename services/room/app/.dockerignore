@@ -1,0 +1,17 @@
+out
+
+.idea
+*.iml
+
+.git
+.gitattributes
+.gitignore
+
+HELP.md
+
+.env
+.env.*
+application-local.yml
+application-local.yaml
+src/main/resources/application-local.yml
+src/main/resources/application-local.yaml

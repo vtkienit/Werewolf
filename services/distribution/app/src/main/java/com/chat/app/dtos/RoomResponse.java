@@ -1,0 +1,21 @@
+package com.chat.app.dtos;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.List;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class RoomResponse {
+
+    private String roomCode;
+
+    private String hostId;
+
+    private int maxPlayers;
+
+    private List<DistributionPlayerRequest> players;
+}
