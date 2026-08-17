@@ -21,9 +21,9 @@ public final class PublicRoomSummaryMapper {
         if (value == null || !value.isArray()) return List.of();
         TreeMap<String, Integer> totals = new TreeMap<>();
         for (JsonNode item : value) {
-            if (!item.isObject() || item.size() != 2 || !item.path("roleId").isTextual() || !item.path("quantity").isIntegralNumber())
+            if (!item.isObject() || item.size() != 2 || !item.path("roleId").isString() || !item.path("quantity").isIntegralNumber())
                 continue;
-            String roleId = item.path("roleId").asText();
+            String roleId = item.path("roleId").asString();
             int quantity = item.path("quantity").asInt(0);
             if (quantity <= 0 || !approved(roleId)) continue;
             totals.merge(roleId, quantity, Integer::sum);
@@ -34,8 +34,8 @@ public final class PublicRoomSummaryMapper {
     }
 
     public static PublicCompletedGameSummary completed(JsonNode value) {
-        if (value == null || !value.isObject() || !value.path("winningSide").isTextual()) return null;
-        String winningSide = value.path("winningSide").asText();
+        if (value == null || !value.isObject() || !value.path("winningSide").isString()) return null;
+        String winningSide = value.path("winningSide").asString();
         List<PublicRoleSummary> roles = roles(value.path("roles"));
         return WINNING_SIDES.contains(winningSide) && !roles.isEmpty() ? new PublicCompletedGameSummary(winningSide, roles) : null;
     }

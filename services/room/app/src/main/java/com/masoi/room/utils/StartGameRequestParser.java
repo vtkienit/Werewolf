@@ -17,7 +17,7 @@ public class StartGameRequestParser {
 
     public StartGameRequest parse(byte[] body) {
         if (body == null || body.length == 0) throw new InvalidStartGameRequestException();
-        try (JsonParser p = factory.createParser(body)) {
+        try (JsonParser p = factory.createParser(ObjectReadContext.empty(), body)) {
             if (p.nextToken() != JsonToken.START_OBJECT) throw new InvalidStartGameRequestException();
             String gameId = null, playerName = null, roleValue = null;
             while (p.nextToken() != JsonToken.END_OBJECT) {
@@ -25,9 +25,9 @@ public class StartGameRequestParser {
                 String field = p.currentName();
                 if (p.nextToken() != JsonToken.VALUE_STRING) throw new InvalidStartGameRequestException();
                 switch (field) {
-                    case "gameId" -> gameId = p.getText();
-                    case "playerName" -> playerName = p.getText();
-                    case "roleId" -> roleValue = p.getText();
+                    case "gameId" -> gameId = p.getString();
+                    case "playerName" -> playerName = p.getString();
+                    case "roleId" -> roleValue = p.getString();
                     default -> throw new InvalidStartGameRequestException();
                 }
             }

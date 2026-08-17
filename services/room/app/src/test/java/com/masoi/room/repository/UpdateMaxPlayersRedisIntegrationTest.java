@@ -182,7 +182,7 @@ class UpdateMaxPlayersRedisIntegrationTest {
 
         UpdateMaxPlayersResponse result = service.updateMaxPlayers(ROOM_CODE, HOST_ID, 6);
         assertThat(result).isEqualTo(new UpdateMaxPlayersResponse(6));
-        assertThat(objectMapper.readTree(redis.opsForValue().get(ROOM_KEY)).path("lifecycle").asText()).isEqualTo("WAITING");
+        assertThat(objectMapper.readTree(redis.opsForValue().get(ROOM_KEY)).path("lifecycle").asString()).isEqualTo("WAITING");
     }
 
     @Test
@@ -229,7 +229,7 @@ class UpdateMaxPlayersRedisIntegrationTest {
         redis.opsForValue().set(ROOM_KEY, room.toString());
         service.updateMaxPlayers(ROOM_CODE, HOST_ID, 9);
         JsonNode stored = objectMapper.readTree(redis.opsForValue().get(ROOM_KEY));
-        assertThat(stored.path("lifecycle").asText()).isEqualTo("WAITING");
+        assertThat(stored.path("lifecycle").asString()).isEqualTo("WAITING");
         assertThat(stored.path("maxPlayers").asInt()).isEqualTo(9);
     }
 }

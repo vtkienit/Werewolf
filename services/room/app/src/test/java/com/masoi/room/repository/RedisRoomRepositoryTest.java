@@ -44,7 +44,7 @@ class RedisRoomRepositoryTest {
         JsonNode root = objectMapper.readTree(json.getValue());
         assertThat(root.size()).isEqualTo(5);
         assertThat(root.has("roomCode") && root.has("hostId") && root.has("maxPlayers") && root.has("players")).isTrue();
-        assertThat(root.path("lifecycle").asText()).isEqualTo("WAITING");
+        assertThat(root.path("lifecycle").asString()).isEqualTo("WAITING");
         assertThat(json.getValue()).doesNotContain("@class", "@type", "java.", "lock:room", "ttl");
         verify(redis, never()).hasKey(anyString());
     }

@@ -31,6 +31,5 @@ class RoleIdTest {
     void rejectsAliasesSafely() {
         for (String id : new String[]{null, "", " ", "WEREWOLF", "Werewolf", "unknown", " werewolf", "werewolf "})
             assertThatThrownBy(() -> RoleId.fromWireValue(id)).isInstanceOf(InvalidRoleIdException.class).hasMessage("Invalid role ID");
-        ;
     }
 }

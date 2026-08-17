@@ -34,7 +34,7 @@ public class PlayerRemovalRoomStore {
         ArrayNode players = snapshot.root().withArray("players");
         for (int index = 0; index < players.size(); index++) {
             JsonNode player = players.get(index);
-            if (playerId.equals(player.path("playerId").asText())) {
+            if (playerId.equals(player.path("playerId").asString())) {
                 players.remove(index);
                 write(roomCode, snapshot.root());
                 return new Removed(snapshot(snapshot.root()));
@@ -77,14 +77,14 @@ public class PlayerRemovalRoomStore {
     }
 
     private static RoomSnapshot snapshot(ObjectNode root) {
-        return new RoomSnapshot(root, root.get("hostId").asText(), root.get("maxPlayers").asInt(), root.get("players").size());
+        return new RoomSnapshot(root, root.get("hostId").asString(), root.get("maxPlayers").asInt(), root.get("players").size());
     }
 
     private static boolean isValidRoom(JsonNode root, String roomCode) {
         return root != null && root.isObject()
                 && root.has("roomCode") && root.get("roomCode").isString()
-                && roomCode.equals(root.get("roomCode").asText()) && RoomCodeFormat.isValid(roomCode)
-                && root.has("hostId") && root.get("hostId").isString() && canonicalHostId(root.get("hostId").asText())
+                && roomCode.equals(root.get("roomCode").asString()) && RoomCodeFormat.isValid(roomCode)
+                && root.has("hostId") && root.get("hostId").isString() && canonicalHostId(root.get("hostId").asString())
                 && root.has("maxPlayers") && root.get("maxPlayers").isIntegralNumber() && root.get("maxPlayers").canConvertToInt()
                 && root.has("players") && root.get("players").isArray();
     }

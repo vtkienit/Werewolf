@@ -53,8 +53,8 @@ public class PlayerPresenceStore {
         if (value == null) return null;
         try {
             var association = mapper.readTree(value);
-            String roomCode = association.path("roomCode").asText();
-            String playerId = association.path("playerId").asText();
+            String roomCode = association.path("roomCode").asString();
+            String playerId = association.path("playerId").asString();
             return roomCode.isBlank() || playerId.isBlank() ? null : new SessionAssociation(roomCode, playerId);
         } catch (Exception exception) {
             return null;
@@ -68,8 +68,8 @@ public class PlayerPresenceStore {
         String playerId;
         try {
             var association = mapper.readTree(value);
-            roomCode = association.path("roomCode").asText();
-            playerId = association.path("playerId").asText();
+            roomCode = association.path("roomCode").asString();
+            playerId = association.path("playerId").asString();
         } catch (Exception exception) {
             redis.delete(sessionKey(sessionId));
             return null;
@@ -93,4 +93,3 @@ public class PlayerPresenceStore {
     public record SessionAssociation(String roomCode, String playerId) {
     }
 }
-

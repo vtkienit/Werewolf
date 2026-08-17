@@ -35,7 +35,7 @@ public class GameEventService {
             RoomSnapshot room = requireRoom(roomCode);
             JsonNode player = findPlayer(room, playerId);
             if (player == null) throw new PlayerNotFoundException();
-            String storedName = player.path("playerName").asText();
+            String storedName = player.path("playerName").asString();
             if (!storedName.equals(request.playerName())) throw new PlayerNameMismatchException();
             StartGameEvent event = new StartGameEvent(request.gameId(), storedName, request.roleId());
             lifecycle.start(roomCode, request.gameId(), playerId, storedName, request.roleId(), () -> publish("/broadcast/distribution/rooms/" + roomCode + "/start-game/" + playerId, event));
@@ -71,12 +71,12 @@ public class GameEventService {
         try {
             if (replay instanceof GameEventLifecycleRegistry.StartReplay start) {
                 RoomSnapshot room = rooms.read(roomCode);
-                if (room == null || !"PLAYING".equals(room.root().path("lifecycle").asText("WAITING"))) {
+                if (room == null || !"PLAYING".equals(room.root().path("lifecycle").asString("WAITING"))) {
                     lifecycle.invalidate(roomCode);
                     return;
                 }
                 JsonNode player = findPlayer(room, playerId);
-                if (player == null || !start.event().roleId().wireValue().equals(player.path("roleId").asText())) {
+                if (player == null || !start.event().roleId().wireValue().equals(player.path("roleId").asString())) {
                     lifecycle.invalidatePlayer(roomCode, playerId);
                     return;
                 }
@@ -98,7 +98,7 @@ public class GameEventService {
 
     private JsonNode findPlayer(RoomSnapshot room, String playerId) {
         for (JsonNode player : room.root().withArray("players"))
-            if (playerId.equals(player.path("playerId").asText())) return player;
+            if (playerId.equals(player.path("playerId").asString())) return player;
         return null;
     }
 

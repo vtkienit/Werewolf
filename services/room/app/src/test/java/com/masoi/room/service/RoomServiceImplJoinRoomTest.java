@@ -117,6 +117,6 @@ class RoomServiceImplJoinRoomTest {
     }
 
     private RoomSnapshot snapshot(ObjectNode root) {
-        return new RoomSnapshot(root, root.path("hostId").asText(), root.path("maxPlayers").asInt(), root.withArray("players").size());
+        return new RoomSnapshot(root, root.path("hostId").asString(), root.path("maxPlayers").asInt(), root.withArray("players").size());
     }
 }

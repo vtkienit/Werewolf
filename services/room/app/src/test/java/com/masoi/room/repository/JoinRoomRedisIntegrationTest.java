@@ -53,8 +53,8 @@ class JoinRoomRedisIntegrationTest {
         joinedPlayerIds.add(result.playerId());
         JsonNode saved = mapper.readTree(redis.opsForValue().get(KEY));
         assertThat(result.playerName()).isEqualTo("Alice");
-        assertThat(saved.path("roomCode").asText()).isEqualTo(CODE);
-        assertThat(saved.path("hostId").asText()).isEqualTo("mP5cYgYNGxa2-WPNnTMR1Q");
+        assertThat(saved.path("roomCode").asString()).isEqualTo(CODE);
+        assertThat(saved.path("hostId").asString()).isEqualTo("mP5cYgYNGxa2-WPNnTMR1Q");
         assertThat(saved.path("maxPlayers").asInt()).isEqualTo(6);
         assertThat(saved.path("futureField").path("enabled").asBoolean()).isTrue();
         assertThat(saved.path("players").size()).isEqualTo(2);

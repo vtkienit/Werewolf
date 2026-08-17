@@ -35,20 +35,20 @@ class DistributionServiceTest {
         PlayGameRequest request = new PlayGameRequest("host", List.of(new RoleQuantityRequest("werewolf", 1), new RoleQuantityRequest("villager", 5)));
         assertThat(service.confirmSetup("ABC234", request).activeRoles()).hasSize(2);
         assertThat(service.playGame("ABC234", request).getNumberPlayers()).isEqualTo(6);
-        assertThat(room.path("lifecycle").asText()).isEqualTo("PLAYING");
+        assertThat(room.path("lifecycle").asString()).isEqualTo("PLAYING");
         assertThatThrownBy(() -> service.playGame("ABC234", request)).hasMessage("Game already started");
         service.endGame("ABC234", new EndGameRequest("host", "VILLAGE"));
-        assertThat(room.path("lifecycle").asText()).isEqualTo("WAITING");
+        assertThat(room.path("lifecycle").asString()).isEqualTo("WAITING");
         assertThat(room.withArray("players")).allSatisfy(player -> assertThat(player.path("roleId").isNull()).isTrue());
         assertThat(room.withArray("players")).allSatisfy(player -> assertThat(player.path("ready").asBoolean()).isFalse());
         assertThat(room.withArray("activeRoles")).isEmpty();
-        assertThat(room.path("lastCompletedGame").path("winningSide").asText()).isEqualTo("VILLAGE");
+        assertThat(room.path("lastCompletedGame").path("winningSide").asString()).isEqualTo("VILLAGE");
         assertThat(room.path("lastCompletedGame").path("roles")).hasSize(2);
         room.withArray("players").forEach(player -> ((ObjectNode) player).put("ready", true));
         service.confirmSetup("ABC234", request);
         assertThat(service.playGame("ABC234", request).getNumberPlayers()).isEqualTo(6);
         service.endGame("ABC234", new EndGameRequest("host", "WEREWOLF"));
-        assertThat(room.path("lastCompletedGame").path("winningSide").asText()).isEqualTo("WEREWOLF");
+        assertThat(room.path("lastCompletedGame").path("winningSide").asString()).isEqualTo("WEREWOLF");
     }
 
     @Test
@@ -81,7 +81,7 @@ class DistributionServiceTest {
         org.mockito.Mockito.when(store.locked(org.mockito.ArgumentMatchers.eq("ABC234"), any())).thenAnswer(invocation -> ((Function<ObjectNode, ?>) invocation.getArgument(1)).apply(room));
         PlayGameRequest request = new PlayGameRequest("host", List.of(new RoleQuantityRequest("not_a_role", 6)));
         assertThatThrownBy(() -> service.confirmSetup("ABC234", request)).hasMessage("Invalid role");
-        assertThat(room.path("lifecycle").asText()).isEqualTo("WAITING");
+        assertThat(room.path("lifecycle").asString()).isEqualTo("WAITING");
         assertThat(room.has("gameId")).isFalse();
         assertThat(room.withArray("players")).allSatisfy(player -> assertThat(player.path("roleId").isNull()).isTrue());
         verifyNoInteractions(realtime);

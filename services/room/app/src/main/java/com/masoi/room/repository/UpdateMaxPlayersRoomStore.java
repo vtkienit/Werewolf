@@ -45,7 +45,7 @@ public class UpdateMaxPlayersRoomStore {
                 throw new RoomSerializationException(null);
             }
             ObjectNode objectRoot = (ObjectNode) root;
-            String hostId = root.get(FIELD_HOST_ID).asText();
+            String hostId = root.get(FIELD_HOST_ID).asString();
             int currentMaxPlayers = root.get(FIELD_MAX_PLAYERS).asInt();
             int playerCount = root.get(FIELD_PLAYERS).size();
             return new RoomSnapshot(objectRoot, hostId, currentMaxPlayers, playerCount);
@@ -71,10 +71,10 @@ public class UpdateMaxPlayersRoomStore {
     private static boolean isValidRoom(JsonNode root, String requestedRoomCode) {
         return root != null && root.isObject()
                 && root.has(FIELD_ROOM_CODE) && root.get(FIELD_ROOM_CODE).isString()
-                && RoomCodeFormat.isValid(root.get(FIELD_ROOM_CODE).asText())
-                && requestedRoomCode.equals(root.get(FIELD_ROOM_CODE).asText())
+                && RoomCodeFormat.isValid(root.get(FIELD_ROOM_CODE).asString())
+                && requestedRoomCode.equals(root.get(FIELD_ROOM_CODE).asString())
                 && root.has(FIELD_HOST_ID) && root.get(FIELD_HOST_ID).isString()
-                && isCanonicalHostId(root.get(FIELD_HOST_ID).asText())
+                && isCanonicalHostId(root.get(FIELD_HOST_ID).asString())
                 && root.has(FIELD_MAX_PLAYERS) && root.get(FIELD_MAX_PLAYERS).isIntegralNumber()
                 && root.get(FIELD_MAX_PLAYERS).canConvertToInt()
                 && root.has(FIELD_PLAYERS) && root.get(FIELD_PLAYERS).isArray();

@@ -122,8 +122,8 @@ class PlayerAuthRedisIntegrationTest {
         assertThat(saved.path("future").path("enabled").asBoolean()).isTrue();
         assertThat(saved.path("players").get(0).path("futurePlayer").asInt()).isEqualTo(7);
         assertThat(saved.path("players").get(1).size()).isEqualTo(4);
-        assertThat(saved.path("players").get(1).path("playerId").asText()).isEqualTo(joined.playerId());
-        assertThat(saved.path("players").get(1).path("playerName").asText()).isEqualTo("Alice");
+        assertThat(saved.path("players").get(1).path("playerId").asString()).isEqualTo(joined.playerId());
+        assertThat(saved.path("players").get(1).path("playerName").asString()).isEqualTo("Alice");
         assertThat(saved.path("players").get(1).path("roleId").isNull()).isTrue();
         assertThat(saved.path("players").get(1).path("ready").asBoolean()).isFalse();
         assertThat(mapper.writeValueAsString(saved)).doesNotContain(joined.playerToken(), PlayerAuthStore.digest(joined.playerToken()));
@@ -198,7 +198,7 @@ class PlayerAuthRedisIntegrationTest {
     }
 
     private RoomSnapshot snapshot(ObjectNode root) {
-        return new RoomSnapshot(root, root.path("hostId").asText(), root.path("maxPlayers").asInt(), root.withArray("players").size());
+        return new RoomSnapshot(root, root.path("hostId").asString(), root.path("maxPlayers").asInt(), root.withArray("players").size());
     }
 
     private void seed(String code) throws Exception {

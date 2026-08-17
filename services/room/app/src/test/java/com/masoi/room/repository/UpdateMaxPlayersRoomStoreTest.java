@@ -149,8 +149,8 @@ class UpdateMaxPlayersRoomStoreTest {
         JsonNode writtenRoot = objectMapper.readTree(written);
         assertThat(writtenRoot.size()).isEqualTo(4);
         assertThat(writtenRoot.get("maxPlayers").asInt()).isEqualTo(12);
-        assertThat(writtenRoot.get("roomCode").asText()).isEqualTo("A7K9Q2");
-        assertThat(writtenRoot.get("hostId").asText()).isEqualTo("mP5cYgYNGxa2-WPNnTMR1Q");
+        assertThat(writtenRoot.get("roomCode").asString()).isEqualTo("A7K9Q2");
+        assertThat(writtenRoot.get("hostId").asString()).isEqualTo("mP5cYgYNGxa2-WPNnTMR1Q");
         JsonNode originalPlayers = objectMapper.readTree(PRESERVATION_FIXTURE).get("players");
         assertThat(writtenRoot.get("players")).isEqualTo(originalPlayers);
     }

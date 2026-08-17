@@ -60,15 +60,15 @@ class DistributionPersistenceRedisIntegrationTest {
         service.confirmSetup(CODE, six);
         service.playGame(CODE, six);
         var playing = mapper.readTree(redis.opsForValue().get(ROOM));
-        assertThat(playing.path("lifecycle").asText()).isEqualTo("PLAYING");
-        assertThat(playing.path("gameId").asText()).isNotBlank();
-        assertThat(playing.path("futureRoomField").asText()).isEqualTo("preserved");
-        assertThat(playing.path("players").get(0).path("futurePlayerField").asText()).isEqualTo("preserved");
+        assertThat(playing.path("lifecycle").asString()).isEqualTo("PLAYING");
+        assertThat(playing.path("gameId").asString()).isNotBlank();
+        assertThat(playing.path("futureRoomField").asString()).isEqualTo("preserved");
+        assertThat(playing.path("players").get(0).path("futurePlayerField").asString()).isEqualTo("preserved");
         assertThatThrownBy(() -> service.playGame(CODE, six)).hasMessage("Game already started");
 
         service.endGame(CODE, new EndGameRequest("host", "VILLAGE"));
         var waiting = mapper.readTree(redis.opsForValue().get(ROOM));
-        assertThat(waiting.path("lifecycle").asText()).isEqualTo("WAITING");
+        assertThat(waiting.path("lifecycle").asString()).isEqualTo("WAITING");
         assertThat(waiting.has("gameId")).isFalse();
         assertThat(waiting.path("maxPlayers").asInt()).isEqualTo(8);
         assertThat(waiting.path("players")).hasSize(6).allSatisfy(player -> assertThat(player.path("roleId").isNull()).isTrue());
@@ -97,9 +97,9 @@ class DistributionPersistenceRedisIntegrationTest {
                 .postForEntity(any(String.class), any(), any(Class.class), any(Object[].class));
         assertThatThrownBy(() -> service.playGame(CODE, request(5))).hasMessage("Realtime service unavailable");
         var stored = mapper.readTree(redis.opsForValue().get(ROOM));
-        assertThat(stored.path("lifecycle").asText()).isEqualTo("PLAYING");
-        assertThat(stored.path("gameId").asText()).isNotBlank();
-        assertThat(stored.path("players")).allSatisfy(player -> assertThat(player.path("roleId").asText()).isNotBlank());
+        assertThat(stored.path("lifecycle").asString()).isEqualTo("PLAYING");
+        assertThat(stored.path("gameId").asString()).isNotBlank();
+        assertThat(stored.path("players")).allSatisfy(player -> assertThat(player.path("roleId").asString()).isNotBlank());
     }
 
     @Test
@@ -111,7 +111,7 @@ class DistributionPersistenceRedisIntegrationTest {
                 .postForEntity(any(String.class), any(), any(Class.class), any(Object[].class));
         assertThatThrownBy(() -> service.endGame(CODE, new EndGameRequest("host", "VILLAGE"))).hasMessage("Realtime service unavailable");
         var stored = mapper.readTree(redis.opsForValue().get(ROOM));
-        assertThat(stored.path("lifecycle").asText()).isEqualTo("WAITING");
+        assertThat(stored.path("lifecycle").asString()).isEqualTo("WAITING");
         assertThat(stored.has("gameId")).isFalse();
         assertThat(stored.path("players")).hasSize(6).allSatisfy(player -> assertThat(player.path("roleId").isNull()).isTrue());
     }

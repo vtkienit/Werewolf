@@ -143,7 +143,7 @@ class RoomServiceImplUpdateMaxPlayersTest {
         when(store.read(ROOM_CODE)).thenReturn(snapshot(HOST_ID, 6, 0));
         assertThat(service.updateMaxPlayers(ROOM_CODE, HOST_ID, 6)).isEqualTo(new UpdateMaxPlayersResponse(6));
         verify(store).read(ROOM_CODE);
-        verify(store).write(eq(ROOM_CODE), org.mockito.ArgumentMatchers.argThat(root -> "WAITING".equals(root.path("lifecycle").asText())));
+        verify(store).write(eq(ROOM_CODE), org.mockito.ArgumentMatchers.argThat(root -> "WAITING".equals(root.path("lifecycle").asString())));
         verify(lock).release(ROOM_CODE, "owner-token");
     }
 

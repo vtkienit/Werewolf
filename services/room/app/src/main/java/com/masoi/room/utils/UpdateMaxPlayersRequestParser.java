@@ -7,6 +7,7 @@ import tools.jackson.core.json.JsonFactory;
 import tools.jackson.core.JacksonException;
 import tools.jackson.core.JsonParser;
 import tools.jackson.core.JsonToken;
+import tools.jackson.core.ObjectReadContext;
 import tools.jackson.core.StreamReadFeature;
 import tools.jackson.databind.ObjectMapper;
 
@@ -26,7 +27,7 @@ public class UpdateMaxPlayersRequestParser {
         if (body == null || body.length == 0) {
             throw new InvalidUpdateMaxPlayersRequestException();
         }
-        try (JsonParser parser = jsonFactory.createParser(body)) {
+        try (JsonParser parser = jsonFactory.createParser(ObjectReadContext.empty(), body)) {
             if (parser.nextToken() != JsonToken.START_OBJECT
                     || parser.nextToken() != JsonToken.PROPERTY_NAME
                     || !FIELD.equals(parser.currentName())

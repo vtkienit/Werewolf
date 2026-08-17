@@ -92,7 +92,7 @@ public class RoomServiceImpl implements RoomService {
             if (!HostCredential.matches(hostId, snapshot.hostId())) {
                 throw new HostCredentialInvalidException();
             }
-            if ("PLAYING".equals(snapshot.root().path("lifecycle").asText("WAITING"))) throw new RoomPlayingException();
+            if ("PLAYING".equals(snapshot.root().path("lifecycle").asString("WAITING"))) throw new RoomPlayingException();
             if (maxPlayers < snapshot.playerCount()) {
                 throw new MaxPlayersBelowPlayerCountException();
             }
@@ -123,7 +123,7 @@ public class RoomServiceImpl implements RoomService {
                 throw new JoinRoomSerializationException(exception);
             }
             if (snapshot == null) throw new JoinRoomNotFoundException();
-            if ("PLAYING".equals(snapshot.root().path("lifecycle").asText("WAITING"))) throw new RoomPlayingException();
+            if ("PLAYING".equals(snapshot.root().path("lifecycle").asString("WAITING"))) throw new RoomPlayingException();
             ArrayNode players = (ArrayNode) snapshot.root().get("players");
             if (players.size() >= snapshot.maxPlayers()) throw new RoomFullException();
             String playerId = uniquePlayerId(players);
@@ -161,10 +161,10 @@ public class RoomServiceImpl implements RoomService {
             if (snapshot == null) throw new RoomNotFoundException();
             if (playerId == null || playerId.isBlank() || !playerTokenService.matches(roomCode, playerId, playerToken))
                 throw new PlayerCredentialInvalidException();
-            if ("PLAYING".equals(snapshot.root().path("lifecycle").asText("WAITING"))) throw new RoomPlayingException();
+            if ("PLAYING".equals(snapshot.root().path("lifecycle").asString("WAITING"))) throw new RoomPlayingException();
             ObjectNode target = null;
             for (JsonNode player : snapshot.root().withArray("players"))
-                if (playerId.equals(player.path("playerId").asText())) target = (ObjectNode) player;
+                if (playerId.equals(player.path("playerId").asString())) target = (ObjectNode) player;
             if (target == null) throw new PlayerNotFoundException();
             target.put("ready", ready);
             snapshot.root().put("lifecycle", "WAITING");
@@ -179,7 +179,7 @@ public class RoomServiceImpl implements RoomService {
             String candidate = playerIdGenerator.generate();
             boolean exists = false;
             for (JsonNode player : players)
-                if (candidate.equals(player.path("playerId").asText())) {
+                if (candidate.equals(player.path("playerId").asString())) {
                     exists = true;
                     break;
                 }

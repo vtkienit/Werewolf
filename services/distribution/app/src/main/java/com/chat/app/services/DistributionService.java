@@ -63,14 +63,14 @@ public class DistributionService {
         String winningSide = request == null ? null : request.getWinningSide();
         String gameId = rooms.locked(roomCode, room -> {
             validateHost(room, hostId);
-            if (!"PLAYING".equals(room.path("lifecycle").asText("WAITING"))) conflict("Game is not playing");
+            if (!"PLAYING".equals(room.path("lifecycle").asString("WAITING"))) conflict("Game is not playing");
             if (winningSide == null || winningSide.isBlank())
                 throw new BaseException("Winning side is required", HttpStatus.BAD_REQUEST);
             boolean validWinner = false;
             for (JsonNode player : room.withArray("players"))
-                if (winningSide.equals(ApprovedRoleIds.side(player.path("roleId").asText()))) validWinner = true;
+                if (winningSide.equals(ApprovedRoleIds.side(player.path("roleId").asString()))) validWinner = true;
             if (!validWinner) throw new BaseException("Invalid winning side", HttpStatus.BAD_REQUEST);
-            String activeGameId = room.path("gameId").asText();
+            String activeGameId = room.path("gameId").asString();
             if (activeGameId.isBlank()) conflict("Game state is invalid");
             ArrayNode completedRoles = room.withArray("activeRoles").deepCopy();
             ObjectNode completed = room.putObject("lastCompletedGame");
@@ -91,7 +91,7 @@ public class DistributionService {
 
     private List<DistributionPlayerRequest> start(ObjectNode room, PlayGameRequest request, String gameId) {
         validateHost(room, request == null ? null : request.getHostId());
-        if (!"WAITING".equals(room.path("lifecycle").asText("WAITING"))) conflict("Game already started");
+        if (!"WAITING".equals(room.path("lifecycle").asString("WAITING"))) conflict("Game already started");
         ArrayNode players = room.withArray("players");
         if (players.size() < 6) throw new BaseException("At least 6 players are required", HttpStatus.BAD_REQUEST);
         for (JsonNode player : players)
@@ -108,7 +108,7 @@ public class DistributionService {
         for (int index = 0; index < players.size(); index++) {
             ObjectNode player = (ObjectNode) players.get(index);
             player.put("roleId", roles.get(index));
-            assigned.add(DistributionPlayerRequest.builder().playerId(player.path("playerId").asText()).playerName(player.path("playerName").asText()).roleId(roles.get(index)).build());
+            assigned.add(DistributionPlayerRequest.builder().playerId(player.path("playerId").asString()).playerName(player.path("playerName").asString()).roleId(roles.get(index)).build());
         }
         room.put("lifecycle", "PLAYING");
         room.put("gameId", gameId);
@@ -117,7 +117,7 @@ public class DistributionService {
 
     private List<RoleQuantityRequest> confirm(ObjectNode room, PlayGameRequest request) {
         validateHost(room, request == null ? null : request.getHostId());
-        if (!"WAITING".equals(room.path("lifecycle").asText("WAITING"))) conflict("Game already started");
+        if (!"WAITING".equals(room.path("lifecycle").asString("WAITING"))) conflict("Game already started");
         List<RoleQuantityRequest> roles = canonicalRoles(request == null ? null : request.getRoles());
         int total = roles.stream().mapToInt(RoleQuantityRequest::getQuantity).sum();
         if (total < 6) throw new BaseException("At least 6 roles are required", HttpStatus.BAD_REQUEST);
@@ -147,7 +147,7 @@ public class DistributionService {
     private static List<RoleQuantityRequest> storedRoles(ArrayNode input) {
         List<RoleQuantityRequest> roles = new ArrayList<>();
         for (JsonNode role : input) {
-            String roleId = role.path("roleId").asText("");
+            String roleId = role.path("roleId").asString("");
             int quantity = role.path("quantity").asInt(0);
             if (!ApprovedRoleIds.contains(roleId) || quantity <= 0) return List.of();
             roles.add(new RoleQuantityRequest(roleId, quantity));
@@ -162,7 +162,7 @@ public class DistributionService {
 
     private void validateHost(ObjectNode room, String hostId) {
         if (hostId == null || hostId.isBlank()) throw new BaseException("hostId is required", HttpStatus.BAD_REQUEST);
-        if (!hostId.equals(room.path("hostId").asText()))
+        if (!hostId.equals(room.path("hostId").asString()))
             throw new BaseException("Invalid hostId", HttpStatus.UNAUTHORIZED);
     }
 

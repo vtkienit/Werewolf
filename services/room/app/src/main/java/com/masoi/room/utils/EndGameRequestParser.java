@@ -16,13 +16,13 @@ public class EndGameRequestParser {
 
     public EndGameRequest parse(byte[] body) {
         if (body == null || body.length == 0) throw new InvalidEndGameRequestException();
-        try (JsonParser p = factory.createParser(body)) {
+        try (JsonParser p = factory.createParser(ObjectReadContext.empty(), body)) {
             if (p.nextToken() != JsonToken.START_OBJECT) throw new InvalidEndGameRequestException();
             String gameId = null;
             while (p.nextToken() != JsonToken.END_OBJECT) {
                 if (p.currentToken() != JsonToken.PROPERTY_NAME || !"gameId".equals(p.currentName()) || p.nextToken() != JsonToken.VALUE_STRING)
                     throw new InvalidEndGameRequestException();
-                gameId = p.getText();
+                gameId = p.getString();
             }
             if (gameId == null || gameId.isBlank() || p.nextToken() != null) throw new InvalidEndGameRequestException();
             return new EndGameRequest(gameId);

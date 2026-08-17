@@ -14,7 +14,7 @@ class GameEventContractSerializationTest {
         var e = new StartGameEvent("game-001", "Kien", RoleId.WEREWOLF);
         var j = mapper.readTree(mapper.writeValueAsString(e));
         assertThat(j.propertyNames()).containsExactlyInAnyOrder("gameId", "playerName", "roleId");
-        assertThat(j.get("roleId").asText()).isEqualTo("werewolf");
+        assertThat(j.get("roleId").asString()).isEqualTo("werewolf");
         assertThat(e.toString()).doesNotContain("game-001", "Kien", "werewolf", "WEREWOLF");
     }
 

@@ -136,18 +136,18 @@ public class LobbyService {
         if (room == null) return;
         List<PublicPlayer> players = new ArrayList<>();
         for (JsonNode player : room.root().withArray("players")) {
-            if (!player.path("playerId").isTextual() || !player.path("playerName").isTextual()) continue;
-            String playerId = player.path("playerId").asText();
-            players.add(new PublicPlayer(playerId, player.path("playerName").asText(), presence.connected(roomCode, playerId), player.path("ready").asBoolean(false)));
+            if (!player.path("playerId").isString() || !player.path("playerName").isString()) continue;
+            String playerId = player.path("playerId").asString();
+            players.add(new PublicPlayer(playerId, player.path("playerName").asString(), presence.connected(roomCode, playerId), player.path("ready").asBoolean(false)));
         }
         messaging.convertAndSend("/broadcast/rooms/" + roomCode + "/players",
-                new PlayerListSnapshot(roomCode, room.root().path("lifecycle").asText("WAITING"), players.size(), room.maxPlayers(), List.copyOf(players),
+                new PlayerListSnapshot(roomCode, room.root().path("lifecycle").asString("WAITING"), players.size(), room.maxPlayers(), List.copyOf(players),
                         PublicRoomSummaryMapper.roles(room.root().path("activeRoles")), PublicRoomSummaryMapper.completed(room.root().path("lastCompletedGame"))));
     }
 
     private static boolean hasPlayer(RoomSnapshot room, String playerId) {
         for (JsonNode player : room.root().withArray("players"))
-            if (playerId.equals(player.path("playerId").asText())) return true;
+            if (playerId.equals(player.path("playerId").asString())) return true;
         return false;
     }
 }

@@ -47,7 +47,7 @@ class PlayerRemovalRoomStoreTest {
         ArgumentCaptor<String> json = ArgumentCaptor.forClass(String.class);
         verify(values).set(eq("room:" + ROOM), json.capture());
         JsonNode written = mapper.readTree(json.getValue());
-        assertThat(written.path("players").valueStream().map(node -> node.path("playerId").asText()).toList()).containsExactly("one", "three");
+        assertThat(written.path("players").valueStream().map(node -> node.path("playerId").asString()).toList()).containsExactly("one", "three");
         assertThat(written.path("maxPlayers").asInt()).isEqualTo(6);
         assertThat(written.path("future").path("enabled").asBoolean()).isTrue();
         assertThat(written.path("players").get(1).path("futurePlayer").asInt()).isEqualTo(3);

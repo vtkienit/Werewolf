@@ -22,7 +22,7 @@ class PlayGameResponseTest {
         assertThat(json.propertyNames()).containsExactlyInAnyOrder("roomCode", "numberPlayers", "gameSessionId", "assignments");
         assertThat(json.has("hostId")).isFalse();
         assertThat(json.has("players")).isFalse();
-        assertThat(json.path("assignments").get(0).path("playerId").asText()).isEqualTo("p1");
-        assertThat(json.path("assignments").get(0).path("roleId").asText()).isEqualTo("seer");
+        assertThat(json.path("assignments").get(0).path("playerId").asString()).isEqualTo("p1");
+        assertThat(json.path("assignments").get(0).path("roleId").asString()).isEqualTo("seer");
     }
 }

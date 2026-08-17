@@ -22,7 +22,7 @@ public class PrivateRoleSubscriptionAuthorizer {
         RoomSnapshot room = rooms.read(roomCode);
         if (room == null) return false;
         for (JsonNode player : room.root().withArray("players"))
-            if (playerId.equals(player.path("playerId").asText())) return auth.matches(roomCode, playerId, token);
+            if (playerId.equals(player.path("playerId").asString())) return auth.matches(roomCode, playerId, token);
         return false;
     }
 }

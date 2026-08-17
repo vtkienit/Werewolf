@@ -5,6 +5,7 @@ import com.masoi.room.exception.InvalidReadyRequestException;
 import org.springframework.stereotype.Component;
 import tools.jackson.core.JsonParser;
 import tools.jackson.core.JsonToken;
+import tools.jackson.core.ObjectReadContext;
 import tools.jackson.core.StreamReadFeature;
 import tools.jackson.core.json.JsonFactory;
 
@@ -13,7 +14,7 @@ public class ReadyRequestParser {
     private final JsonFactory factory = JsonFactory.builder().enable(StreamReadFeature.STRICT_DUPLICATE_DETECTION).build();
 
     public ReadyRequest parse(byte[] body) {
-        try (JsonParser parser = factory.createParser(body == null ? new byte[0] : body)) {
+        try (JsonParser parser = factory.createParser(ObjectReadContext.empty(), body == null ? new byte[0] : body)) {
             if (parser.nextToken() != JsonToken.START_OBJECT || parser.nextToken() != JsonToken.PROPERTY_NAME
                     || !"ready".equals(parser.currentName()) || parser.nextToken() != JsonToken.VALUE_TRUE && parser.currentToken() != JsonToken.VALUE_FALSE) {
                 throw new InvalidReadyRequestException();

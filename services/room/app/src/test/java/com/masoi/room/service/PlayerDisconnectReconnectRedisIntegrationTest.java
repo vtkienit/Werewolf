@@ -194,7 +194,7 @@ class PlayerDisconnectReconnectRedisIntegrationTest {
     private List<String> savedPlayers(String roomCode) throws Exception {
         List<String> players = new ArrayList<>();
         for (JsonNode player : mapper.readTree(redis.opsForValue().get("room:" + roomCode)).path("players"))
-            players.add(player.path("playerId").asText());
+            players.add(player.path("playerId").asString());
         return players;
     }
 

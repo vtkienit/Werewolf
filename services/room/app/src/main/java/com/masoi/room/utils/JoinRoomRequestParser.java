@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import tools.jackson.core.JacksonException;
 import tools.jackson.core.JsonParser;
 import tools.jackson.core.JsonToken;
+import tools.jackson.core.ObjectReadContext;
 import tools.jackson.core.json.JsonFactory;
 import tools.jackson.core.StreamReadFeature;
 import tools.jackson.databind.ObjectMapper;
@@ -20,12 +21,12 @@ public class JoinRoomRequestParser {
 
     public JoinRoomRequest parse(byte[] body) {
         if (body == null || body.length == 0) throw new InvalidJoinRoomRequestException();
-        try (JsonParser parser = jsonFactory.createParser(body)) {
+        try (JsonParser parser = jsonFactory.createParser(ObjectReadContext.empty(), body)) {
             if (parser.nextToken() != JsonToken.START_OBJECT || parser.nextToken() != JsonToken.PROPERTY_NAME
                     || !"playerName".equals(parser.currentName()) || parser.nextToken() != JsonToken.VALUE_STRING) {
                 throw new InvalidJoinRoomRequestException();
             }
-            String playerName = parser.getText().trim();
+            String playerName = parser.getString().trim();
             if (parser.nextToken() != JsonToken.END_OBJECT || parser.nextToken() != null)
                 throw new InvalidJoinRoomRequestException();
             return new JoinRoomRequest(playerName);

@@ -53,7 +53,7 @@ public class RedisRoomRepository implements RoomRepository {
             JsonNode node = objectMapper.readTree(json);
             if (!valid(node, roomCode)) throw new RoomSerializationException(null);
             ObjectNode root = (ObjectNode) node;
-            return new RoomSnapshot(root, root.get("hostId").asText(), root.get("maxPlayers").asInt(), root.get("players").size());
+            return new RoomSnapshot(root, root.get("hostId").asString(), root.get("maxPlayers").asInt(), root.get("players").size());
         } catch (RoomSerializationException exception) {
             throw exception;
         } catch (JacksonException exception) {
@@ -76,9 +76,9 @@ public class RedisRoomRepository implements RoomRepository {
 
     private static boolean valid(JsonNode root, String roomCode) {
         if (root == null || !root.isObject() || !root.has("roomCode")
-                || !root.get("roomCode").isString() || !roomCode.equals(root.get("roomCode").asText())
+                || !root.get("roomCode").isString() || !roomCode.equals(root.get("roomCode").asString())
                 || !RoomCodeFormat.isValid(roomCode) || !root.has("hostId") || !root.get("hostId").isString()
-                || !canonicalHostId(root.get("hostId").asText()) || !root.has("maxPlayers")
+                || !canonicalHostId(root.get("hostId").asString()) || !root.has("maxPlayers")
                 || !root.get("maxPlayers").isIntegralNumber() || !root.get("maxPlayers").canConvertToInt()
                 || !root.has("players") || !root.get("players").isArray()) return false;
         return true;

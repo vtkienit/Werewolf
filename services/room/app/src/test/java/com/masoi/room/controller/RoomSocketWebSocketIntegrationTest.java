@@ -106,7 +106,7 @@ class RoomSocketWebSocketIntegrationTest {
 
         assertThat(snapshot.path("players")).hasSize(2);
         assertThat(snapshot.path("currentPlayers").asInt()).isEqualTo(2);
-        assertThat(snapshot.at("/players/0/playerId").asText()).isEqualTo(seed.playerId());
+        assertThat(snapshot.at("/players/0/playerId").asString()).isEqualTo(seed.playerId());
         assertThat(snapshot.at("/players/0/isConnected").asBoolean()).isTrue();
         String reverseKey = reverseSessionKey(seed.roomCode(), seed.playerId());
         assertThat(reverseKey).isNotNull();
@@ -172,15 +172,15 @@ class RoomSocketWebSocketIntegrationTest {
 
         assertThat(snapshot.propertyStream().map(java.util.Map.Entry::getKey).toList())
                 .containsExactlyInAnyOrder("roomCode", "status", "currentPlayers", "maxPlayers", "players", "activeRoles", "lastCompletedGame");
-        assertThat(snapshot.path("status").asText()).isEqualTo("WAITING");
-        assertThat(snapshot.path("roomCode").asText()).isEqualTo(seed.roomCode());
+        assertThat(snapshot.path("status").asString()).isEqualTo("WAITING");
+        assertThat(snapshot.path("roomCode").asString()).isEqualTo(seed.roomCode());
         assertThat(snapshot.path("currentPlayers").asInt()).isEqualTo(2);
         assertThat(snapshot.path("maxPlayers").asInt()).isEqualTo(6);
         assertThat(snapshot.path("activeRoles")).isEmpty();
         assertThat(snapshot.path("lastCompletedGame").isNull()).isTrue();
-        assertThat(snapshot.at("/players/0/playerId").asText()).isEqualTo(seed.playerId());
+        assertThat(snapshot.at("/players/0/playerId").asString()).isEqualTo(seed.playerId());
         assertThat(snapshot.at("/players/0/isConnected").asBoolean()).isTrue();
-        assertThat(snapshot.at("/players/1/playerId").asText()).isEqualTo(seed.otherPlayerId());
+        assertThat(snapshot.at("/players/1/playerId").asString()).isEqualTo(seed.otherPlayerId());
         assertThat(snapshot.at("/players/1/isConnected").asBoolean()).isFalse();
         assertPublicPlayers(snapshot);
         assertThat(mapper.writeValueAsString(snapshot)).doesNotContain("hostId", "roleId", "roles", "playerToken", "sessionId", "socketId", "digest", "presence:", "lock", "unknown");
@@ -191,7 +191,7 @@ class RoomSocketWebSocketIntegrationTest {
         Seed seed = seed(2, 2);
         JsonNode snapshot = connectAndReceive(seed);
 
-        assertThat(snapshot.path("status").asText()).isEqualTo("WAITING");
+        assertThat(snapshot.path("status").asString()).isEqualTo("WAITING");
         assertThat(snapshot.path("currentPlayers").asInt()).isEqualTo(2);
         assertThat(snapshot.path("maxPlayers").asInt()).isEqualTo(2);
     }
@@ -307,7 +307,7 @@ class RoomSocketWebSocketIntegrationTest {
         assertThat(redis.opsForValue().get(PlayerPresenceStore.currentKey(seed.roomCode(), seed.playerId()))).isNull();
         awaitReverseSessionRemoved(serverSession);
         assertSnapshot(snapshot, seed.roomCode(), 1, false);
-        assertThat(mapper.readTree(redis.opsForValue().get("room:" + seed.roomCode())).at("/players/0/roleId").asText()).isEqualTo("wolf");
+        assertThat(mapper.readTree(redis.opsForValue().get("room:" + seed.roomCode())).at("/players/0/roleId").asString()).isEqualTo("wolf");
     }
 
     @Test
@@ -423,7 +423,7 @@ class RoomSocketWebSocketIntegrationTest {
         awaitCurrentSession(seed.roomCode(), seed.playerId(), oldServerSession);
 
         messaging.convertAndSend(privateDestination(seed), mapper.createObjectNode().put("gameId", "game-001").put("playerName", "An").put("roleId", "werewolf"));
-        assertThat(currentClient.awaitMessage().path("roleId").asText()).isEqualTo("werewolf");
+        assertThat(currentClient.awaitMessage().path("roleId").asString()).isEqualTo("werewolf");
         assertThat(oldClient.messages.poll(500, TimeUnit.MILLISECONDS)).isNull();
 
         Client wrong = client(seed.roomCode());
@@ -499,7 +499,7 @@ class RoomSocketWebSocketIntegrationTest {
     private void assertSnapshot(JsonNode snapshot, String roomCode, int playerCount, boolean... connected) {
         assertThat(snapshot.propertyStream().map(java.util.Map.Entry::getKey).toList())
                 .containsExactlyInAnyOrder("roomCode", "status", "currentPlayers", "maxPlayers", "players", "activeRoles", "lastCompletedGame");
-        assertThat(snapshot.path("roomCode").asText()).isEqualTo(roomCode);
+        assertThat(snapshot.path("roomCode").asString()).isEqualTo(roomCode);
         assertThat(snapshot.path("currentPlayers").asInt()).isEqualTo(playerCount);
         assertThat(snapshot.path("players")).hasSize(playerCount);
         assertPublicPlayers(snapshot);
@@ -513,7 +513,7 @@ class RoomSocketWebSocketIntegrationTest {
     private void assertAuthenticationError(ErrorFrame error) throws Exception {
         JsonNode body = mapper.readTree(error.payload());
         assertThat(body.propertyStream().map(java.util.Map.Entry::getKey).toList()).containsExactly("code");
-        assertThat(body.path("code").asText()).isEqualTo("SOCKET_AUTH_FAILED");
+        assertThat(body.path("code").asString()).isEqualTo("SOCKET_AUTH_FAILED");
         assertThat(error.headers().getFirst("message")).isEqualTo("SOCKET_AUTH_FAILED");
         assertThat(error.payload()).doesNotContain("player-", "wrong-token", "room:", "token", "digest", "exception");
     }
