@@ -44,7 +44,8 @@ class LobbyServiceLifecycleTest {
 
     @BeforeEach
     void setUp() {
-        lobby = new LobbyService(rooms, auth, presence, removal, lock, scheduler, messaging);
+        lobby = new LobbyService(rooms, auth, presence, removal, lock, scheduler,
+                new PendingPlayerRemovalCoordinator(), messaging);
         when(rooms.read(ROOM)).thenReturn(room(PLAYER, "player-b"));
         when(presence.findAssociation(SESSION)).thenReturn(new PlayerPresenceStore.SessionAssociation(ROOM, PLAYER));
         when(presence.disconnect(SESSION)).thenReturn(new PlayerPresenceStore.Association(ROOM, PLAYER, true));

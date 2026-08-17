@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tools.jackson.databind.JsonNode;
 
@@ -35,7 +34,6 @@ public class LobbyService {
     private final PendingPlayerRemovalCoordinator coordinator;
     private final SimpMessagingTemplate messaging;
 
-    @Autowired
     public LobbyService(RoomRepository rooms, PlayerAuthStore tokens, PlayerPresenceStore presence,
                         PlayerRemovalRoomStore removals, RoomLock lock, PendingPlayerRemovalScheduler scheduler,
                         PendingPlayerRemovalCoordinator coordinator, SimpMessagingTemplate messaging) {
@@ -47,12 +45,6 @@ public class LobbyService {
         this.scheduler = scheduler;
         this.coordinator = coordinator;
         this.messaging = messaging;
-    }
-
-    LobbyService(RoomRepository rooms, PlayerAuthStore tokens, PlayerPresenceStore presence,
-                 PlayerRemovalRoomStore removals, RoomLock lock, PendingPlayerRemovalScheduler scheduler,
-                 SimpMessagingTemplate messaging) {
-        this(rooms, tokens, presence, removals, lock, scheduler, new PendingPlayerRemovalCoordinator(), messaging);
     }
 
     public void connect(String roomCode, PlayerConnectRequest request, String sessionId) {

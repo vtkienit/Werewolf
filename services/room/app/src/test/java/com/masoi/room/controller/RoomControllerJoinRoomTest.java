@@ -8,6 +8,7 @@ import static org.hamcrest.Matchers.hasSize;
 import com.masoi.room.dto.response.JoinRoomResponse;
 import com.masoi.room.exception.GlobalExceptionHandler;
 import com.masoi.room.exception.*;
+import com.masoi.room.service.LobbyService;
 import com.masoi.room.service.RoomService;
 import com.masoi.room.utils.*;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,7 +26,8 @@ class RoomControllerJoinRoomTest {
     void setUp() {
         service = mock(RoomService.class);
         mvc = MockMvcBuilders.standaloneSetup(new RoomController(service,
-                new UpdateMaxPlayersRequestParser(new ObjectMapper()), new JoinRoomRequestParser(new ObjectMapper()))).setControllerAdvice(new GlobalExceptionHandler()).build();
+                new UpdateMaxPlayersRequestParser(new ObjectMapper()), new JoinRoomRequestParser(new ObjectMapper()),
+                mock(ReadyRequestParser.class), mock(LobbyService.class))).setControllerAdvice(new GlobalExceptionHandler()).build();
     }
 
     @Test
@@ -45,7 +47,7 @@ class RoomControllerJoinRoomTest {
     @Test
     void mapsApprovedJoinErrorsExactly() throws Exception {
         Object[][] cases = {{new InvalidPlayerNameException(), 400, "INVALID_PLAYER_NAME", "Player name must be between 1 and 30 characters"}, {new JoinRoomNotFoundException(), 404, "ROOM_NOT_FOUND", "Room not found"},
-                {new RoomFullException(), 409, "ROOM_FULL", "Room is full"}, {new PlayerNameAlreadyExistsException(), 409, "PLAYER_NAME_ALREADY_EXISTS", "Player name already exists"},
+                {new RoomFullException(), 409, "ROOM_FULL", "Room is full"},
                 {new PlayerIdGenerationExhaustedException(), 500, "PLAYER_ID_GENERATION_EXHAUSTED", "Unable to generate player ID"}, {new RoomUpdateBusyException(), 409, "ROOM_UPDATE_BUSY", "Room is currently being updated"},
                 {new RoomStorageUnavailableException(new RuntimeException()), 503, "ROOM_STORAGE_UNAVAILABLE", "Room storage is unavailable"}, {new JoinRoomSerializationException(new RuntimeException()), 500, "ROOM_SERIALIZATION_ERROR", "Unable to process room data"}};
         for (Object[] item : cases) {

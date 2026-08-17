@@ -7,24 +7,14 @@ services:
       timeout: 3s
       retries: 10
       start_period: 5s
-    networks: [ masoi ]
 
   room-service:
-    build:
-      context: ./services/room/app
-      dockerfile: Dockerfile
+    build: ./services/room/app
     environment:
-      ROOM_SERVICE_PORT: 8081
-      MANAGEMENT_PORT: 9081
       REDIS_HOST: redis
-      REDIS_PORT: 6379
       INTERNAL_REALTIME_TOKEN: ${INTERNAL_REALTIME_TOKEN:-replace-with-local-secret}
       PUBLIC_FRONTEND_URL: ${PUBLIC_FRONTEND_URL:-http://localhost}
-      WEBSOCKET_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost}
-      ROOM_LOCK_ACQUISITION_TIMEOUT: ${ROOM_LOCK_ACQUISITION_TIMEOUT:-2s}
-      ROOM_LOCK_LEASE_DURATION: ${ROOM_LOCK_LEASE_DURATION:-10s}
-      ROOM_LOCK_RETRY_INTERVAL: ${ROOM_LOCK_RETRY_INTERVAL:-50ms}
-      DISCONNECT_GRACE_PERIOD: ${DISCONNECT_GRACE_PERIOD:-10s}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost}
     depends_on:
       redis:
         condition: service_healthy
@@ -34,19 +24,12 @@ services:
       timeout: 5s
       retries: 12
       start_period: 30s
-    networks: [ masoi ]
 
   distribution-service:
-    build:
-      context: ./services/distribution/app
-      dockerfile: Dockerfile
+    build: ./services/distribution/app
     environment:
-      DISTRIBUTION_SERVICE_PORT: 8082
-      MANAGEMENT_PORT: 9082
       ROOM_SERVICE_URL: http://room-service:8081
       REDIS_HOST: redis
-      REDIS_PORT: 6379
-      PUBLIC_FRONTEND_URL: ${PUBLIC_FRONTEND_URL:-http://localhost}
       INTERNAL_REALTIME_TOKEN: ${INTERNAL_REALTIME_TOKEN:-replace-with-local-secret}
     depends_on:
       redis:
@@ -59,20 +42,14 @@ services:
       timeout: 5s
       retries: 12
       start_period: 30s
-    networks: [ masoi ]
 
   api-gateway:
-    build:
-      context: ./api-gateway
-      dockerfile: Dockerfile
+    build: ./api-gateway
     ports:
       - "${API_GATEWAY_PORT:-8080}:8080"
     environment:
-      API_GATEWAY_PORT: 8080
-      MANAGEMENT_PORT: 9080
       ROOM_SERVICE_URL: http://room-service:8081
       DISTRIBUTION_SERVICE_URL: http://distribution-service:8082
-      WEBSOCKET_SERVICE_URL: http://room-service:8081
       CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost}
     depends_on:
       room-service:
@@ -85,7 +62,6 @@ services:
       timeout: 5s
       retries: 12
       start_period: 20s
-    networks: [ masoi ]
 
   frontend:
     build:
@@ -99,8 +75,3 @@ services:
     depends_on:
       api-gateway:
         condition: service_healthy
-    networks: [ masoi ]
-
-networks:
-  masoi:
-    driver: bridge

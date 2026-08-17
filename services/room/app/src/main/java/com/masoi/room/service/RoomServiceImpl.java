@@ -35,7 +35,6 @@ import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.node.ArrayNode;
 import tools.jackson.databind.node.ObjectNode;
 import org.springframework.stereotype.Service;
-import org.springframework.beans.factory.annotation.Autowired;
 import com.masoi.room.repository.PlayerAuthStore;
 
 @Service
@@ -53,7 +52,6 @@ public class RoomServiceImpl implements RoomService {
     private final PlayerIdGenerator playerIdGenerator;
     private final PlayerAuthStore playerTokenService;
 
-    @Autowired
     public RoomServiceImpl(HostIdGenerator hostIdGenerator, RoomCodeGenerator roomCodeGenerator,
                            RoomRepository repository, QrUrlFactory qrUrlFactory, RoomLock lock, UpdateMaxPlayersRoomStore store,
                            PlayerIdGenerator playerIdGenerator, PlayerAuthStore playerTokenService) {
@@ -65,18 +63,6 @@ public class RoomServiceImpl implements RoomService {
         this.store = store;
         this.playerIdGenerator = playerIdGenerator;
         this.playerTokenService = playerTokenService;
-    }
-
-    public RoomServiceImpl(HostIdGenerator hostIdGenerator, RoomCodeGenerator roomCodeGenerator,
-                           RoomRepository repository, QrUrlFactory qrUrlFactory, RoomLock lock, UpdateMaxPlayersRoomStore store) {
-        this(hostIdGenerator, roomCodeGenerator, repository, qrUrlFactory, lock, store,
-                () -> java.util.UUID.randomUUID().toString(), null);
-    }
-
-    public RoomServiceImpl(HostIdGenerator hostIdGenerator, RoomCodeGenerator roomCodeGenerator,
-                           RoomRepository repository, QrUrlFactory qrUrlFactory, RoomLock lock, UpdateMaxPlayersRoomStore store,
-                           PlayerIdGenerator playerIdGenerator) {
-        this(hostIdGenerator, roomCodeGenerator, repository, qrUrlFactory, lock, store, playerIdGenerator, null);
     }
 
     @Override
@@ -141,7 +127,7 @@ public class RoomServiceImpl implements RoomService {
             ArrayNode players = (ArrayNode) snapshot.root().get("players");
             if (players.size() >= snapshot.maxPlayers()) throw new RoomFullException();
             String playerId = uniquePlayerId(players);
-            String playerToken = playerTokenService == null ? null : playerTokenService.create(roomCode, playerId);
+            String playerToken = playerTokenService.create(roomCode, playerId);
             ObjectNode player = players.addObject();
             player.put("playerId", playerId);
             player.put("playerName", playerName);
@@ -151,12 +137,10 @@ public class RoomServiceImpl implements RoomService {
             try {
                 repository.write(roomCode, snapshot.root());
             } catch (RuntimeException exception) {
-                if (playerTokenService != null) {
-                    try {
-                        playerTokenService.delete(roomCode, playerId);
-                    } catch (RuntimeException cleanupException) {
-                        exception.addSuppressed(cleanupException);
-                    }
+                try {
+                    playerTokenService.delete(roomCode, playerId);
+                } catch (RuntimeException cleanupException) {
+                    exception.addSuppressed(cleanupException);
                 }
                 if (exception instanceof RoomSerializationException serialization)
                     throw new JoinRoomSerializationException(serialization);
@@ -175,7 +159,7 @@ public class RoomServiceImpl implements RoomService {
         try {
             RoomSnapshot snapshot = repository.read(roomCode);
             if (snapshot == null) throw new RoomNotFoundException();
-            if (playerId == null || playerId.isBlank() || playerTokenService == null || !playerTokenService.matches(roomCode, playerId, playerToken))
+            if (playerId == null || playerId.isBlank() || !playerTokenService.matches(roomCode, playerId, playerToken))
                 throw new PlayerCredentialInvalidException();
             if ("PLAYING".equals(snapshot.root().path("lifecycle").asText("WAITING"))) throw new RoomPlayingException();
             ObjectNode target = null;

@@ -56,7 +56,7 @@ describe("useHostGame lifecycle", () => {
   })
 
   it("requires every Player to be explicitly READY", async () => {
-    const missingReady = players.map(({ ready: _ready, ...player }) => player)
+    const missingReady = players.map(player => ({ playerId: player.playerId, playerName: player.playerName }))
     const oneUnready = players.map((player, index) => index === 2 ? { ...player, ready: false } : player)
 
     expect(renderHook(() => useHostGame("ABC123", "host", missingReady, roles)).result.current.canStart).toBe(false)

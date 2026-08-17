@@ -1,4 +1,6 @@
 spring:
+  config:
+    import: "optional:file:../.env[.properties]"
   application:
     name: api-gateway
 
@@ -36,7 +38,7 @@ spring:
                 - Path=/api/distribution/**
 
             - id: websocket-service
-              uri: ${WEBSOCKET_SERVICE_URL:http://localhost:8081}
+              uri: ${ROOM_SERVICE_URL:http://localhost:8081}
               predicates:
                 - Path=/ws,/ws/**
 
@@ -45,12 +47,4 @@ server:
 
 management:
   server:
-    port: ${MANAGEMENT_PORT:9080}
-  endpoints:
-    web:
-      exposure:
-        include: health
-  endpoint:
-    health:
-      probes:
-        enabled: true
+    port: 9080

@@ -7,10 +7,9 @@ import com.masoi.room.exception.InvalidEndGameRequestException;
 import java.nio.charset.StandardCharsets;
 
 import org.junit.jupiter.api.Test;
-import tools.jackson.databind.ObjectMapper;
 
 class EndGameRequestParserTest {
-    private final EndGameRequestParser parser = new EndGameRequestParser(new ObjectMapper());
+    private final EndGameRequestParser parser = new EndGameRequestParser();
 
     @Test
     void valid() {

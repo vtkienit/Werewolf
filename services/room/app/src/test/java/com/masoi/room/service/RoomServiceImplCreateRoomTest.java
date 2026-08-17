@@ -17,6 +17,8 @@ import com.masoi.room.exception.RoomCodeGenerationExhaustedException;
 import com.masoi.room.exception.RoomStorageUnavailableException;
 import com.masoi.room.dto.response.CreateRoomResponse;
 import com.masoi.room.repository.UpdateMaxPlayersRoomStore;
+import com.masoi.room.repository.PlayerAuthStore;
+import com.masoi.room.utils.PlayerIdGenerator;
 import com.masoi.room.utils.RoomLock;
 import com.masoi.room.repository.RoomRepository;
 import com.masoi.room.model.SaveRoomResult;
@@ -30,7 +32,8 @@ class RoomServiceImplCreateRoomTest {
     private final QrUrlFactory qr = mock(QrUrlFactory.class);
     private final RoomLock lock = mock(RoomLock.class);
     private final UpdateMaxPlayersRoomStore store = mock(UpdateMaxPlayersRoomStore.class);
-    private final RoomServiceImpl service = new RoomServiceImpl(hosts, codes, repository, qr, lock, store);
+    private final RoomServiceImpl service = new RoomServiceImpl(hosts, codes, repository, qr, lock, store,
+            mock(PlayerIdGenerator.class), mock(PlayerAuthStore.class));
 
     @Test
     void firstAttemptPersistsBeforeQrAndReturns() {

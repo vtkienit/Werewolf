@@ -17,7 +17,6 @@ import org.mockito.ArgumentCaptor;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import tools.jackson.databind.ObjectMapper;
 
 class InternalRealtimeControllerTest {
     private final GameEventService service = mock(GameEventService.class);
@@ -25,9 +24,8 @@ class InternalRealtimeControllerTest {
 
     @BeforeEach
     void setup() {
-        ObjectMapper mapper = new ObjectMapper();
         mvc = MockMvcBuilders.standaloneSetup(new InternalRealtimeController(service,
-                        new StartGameRequestParser(mapper), new EndGameRequestParser(mapper)))
+                        new StartGameRequestParser(), new EndGameRequestParser()))
                 .setControllerAdvice(new GlobalExceptionHandler()).build();
     }
 

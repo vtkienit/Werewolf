@@ -58,7 +58,8 @@ class PlayerDisconnectReconnectRedisIntegrationTest {
     @BeforeEach
     void setUp() {
         scheduler = new FakeScheduler();
-        lobby = new LobbyService(rooms, auth, presence, removals, lock, scheduler, messaging);
+        lobby = new LobbyService(rooms, auth, presence, removals, lock, scheduler,
+                new PendingPlayerRemovalCoordinator(), messaging);
         reset(messaging);
     }
 

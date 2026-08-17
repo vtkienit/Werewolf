@@ -10,9 +10,9 @@ describe("versioned Player Round Note storage", () => {
   beforeEach(() => localStorage.clear())
 
   it("keys duplicate names by playerId and confirms fresh sequential rounds", () => {
-    let session = beginGameReviewSession("A7K9Q2", "game-1", assignments)!
-    session = updatePlayerRoundNote("A7K9Q2", "game-1", "p1", "seer note")!
-    session = updatePlayerRoundNote("A7K9Q2", "game-1", "p2", "villager note")!
+    beginGameReviewSession("A7K9Q2", "game-1", assignments)
+    updatePlayerRoundNote("A7K9Q2", "game-1", "p1", "seer note")
+    let session = updatePlayerRoundNote("A7K9Q2", "game-1", "p2", "villager note")!
     expect(session.currentRound.playerNotes.map(note => [note.playerId, note.text])).toEqual([["p1", "seer note"], ["p2", "villager note"]])
     expect(session.currentRound.playerNotes.map(note => note.playerDisambiguator)).toEqual(["Player 1", "Player 2"])
     session = confirmCurrentRound("A7K9Q2", "game-1")!

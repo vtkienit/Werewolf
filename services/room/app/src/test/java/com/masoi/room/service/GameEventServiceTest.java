@@ -24,7 +24,8 @@ class GameEventServiceTest {
     private final RoomLock lock = mock(RoomLock.class);
     private final SimpMessagingTemplate messaging = mock(SimpMessagingTemplate.class);
     private final GameEventLifecycleRegistry lifecycle = new GameEventLifecycleRegistry();
-    private final GameEventService service = new GameEventService(rooms, lock, lifecycle, messaging);
+    private final GameEventService service = new GameEventService(rooms, lock, lifecycle, messaging,
+            mock(LobbyService.class));
     private ObjectNode roomRoot;
 
     @BeforeEach

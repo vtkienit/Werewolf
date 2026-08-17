@@ -9,10 +9,9 @@ import com.masoi.room.model.RoleId;
 import java.nio.charset.StandardCharsets;
 
 import org.junit.jupiter.api.Test;
-import tools.jackson.databind.ObjectMapper;
 
 class StartGameRequestParserTest {
-    private final StartGameRequestParser parser = new StartGameRequestParser(new ObjectMapper());
+    private final StartGameRequestParser parser = new StartGameRequestParser();
 
     @Test
     void validAnyOrder() {

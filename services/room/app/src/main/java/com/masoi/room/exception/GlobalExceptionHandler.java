@@ -2,26 +2,6 @@ package com.masoi.room.exception;
 
 import com.masoi.room.dto.response.ApiErrorResponse;
 
-import com.masoi.room.exception.RoomCodeGenerationExhaustedException;
-import com.masoi.room.exception.InvalidCreateRoomRequestException;
-import com.masoi.room.exception.HostCredentialInvalidException;
-import com.masoi.room.exception.HostCredentialRequiredException;
-import com.masoi.room.exception.InvalidUpdateMaxPlayersRequestException;
-import com.masoi.room.exception.MaxPlayersBelowPlayerCountException;
-import com.masoi.room.exception.MaxPlayersOutOfRangeException;
-import com.masoi.room.exception.RoomNotFoundException;
-import com.masoi.room.exception.InvalidRoomCodeException;
-import com.masoi.room.exception.RoomSerializationException;
-import com.masoi.room.exception.RoomStorageUnavailableException;
-import com.masoi.room.exception.RoomUpdateBusyException;
-import com.masoi.room.exception.InvalidJoinRoomRequestException;
-import com.masoi.room.exception.InvalidPlayerNameException;
-import com.masoi.room.exception.RoomFullException;
-import com.masoi.room.exception.PlayerNameAlreadyExistsException;
-import com.masoi.room.exception.PlayerIdGenerationExhaustedException;
-import com.masoi.room.exception.JoinRoomSerializationException;
-import com.masoi.room.exception.JoinRoomNotFoundException;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -73,11 +53,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(RoomPlayingException.class)
     ResponseEntity<ApiErrorResponse> roomPlaying() {
         return error(HttpStatus.CONFLICT, "ROOM_PLAYING", "Room is currently playing");
-    }
-
-    @ExceptionHandler(PlayerNameAlreadyExistsException.class)
-    ResponseEntity<ApiErrorResponse> duplicatePlayerName() {
-        return error(HttpStatus.CONFLICT, "PLAYER_NAME_ALREADY_EXISTS", "Player name already exists");
     }
 
     @ExceptionHandler(PlayerIdGenerationExhaustedException.class)

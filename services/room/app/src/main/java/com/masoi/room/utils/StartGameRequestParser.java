@@ -6,13 +6,12 @@ import com.masoi.room.model.RoleId;
 import org.springframework.stereotype.Component;
 import tools.jackson.core.*;
 import tools.jackson.core.json.JsonFactory;
-import tools.jackson.databind.ObjectMapper;
 
 @Component
 public class StartGameRequestParser {
     private final JsonFactory factory;
 
-    public StartGameRequestParser(ObjectMapper ignored) {
+    public StartGameRequestParser() {
         factory = JsonFactory.builder().enable(StreamReadFeature.STRICT_DUPLICATE_DETECTION).build();
     }
 

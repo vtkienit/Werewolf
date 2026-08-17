@@ -25,7 +25,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @RestController
 public class RoomController {
@@ -35,7 +34,6 @@ public class RoomController {
     private final ReadyRequestParser readyRequestParser;
     private final LobbyService lobby;
 
-    @Autowired
     public RoomController(RoomService roomService, UpdateMaxPlayersRequestParser requestParser, JoinRoomRequestParser joinRequestParser, ReadyRequestParser readyRequestParser, LobbyService lobby) {
         this.roomService = roomService;
         this.requestParser = requestParser;
@@ -64,16 +62,8 @@ public class RoomController {
         }
         UpdateMaxPlayersRequest request = requestParser.parse(httpRequest.getInputStream().readAllBytes());
         UpdateMaxPlayersResponse response = roomService.updateMaxPlayers(roomCode, hostId, request.maxPlayers());
-        if (lobby != null) lobby.broadcast(roomCode);
+        lobby.broadcast(roomCode);
         return ResponseEntity.status(HttpStatus.OK).body(response);
-    }
-
-    public RoomController(RoomService roomService, UpdateMaxPlayersRequestParser requestParser) {
-        this(roomService, requestParser, new JoinRoomRequestParser(new tools.jackson.databind.ObjectMapper()), new ReadyRequestParser(), null);
-    }
-
-    public RoomController(RoomService roomService, UpdateMaxPlayersRequestParser requestParser, JoinRoomRequestParser joinRequestParser) {
-        this(roomService, requestParser, joinRequestParser, new ReadyRequestParser(), null);
     }
 
     @PostMapping(value = "/api/rooms/{roomCode}/players", consumes = MediaType.APPLICATION_JSON_VALUE,
@@ -83,7 +73,7 @@ public class RoomController {
         RoomCodeFormat.requireCanonical(roomCode);
         JoinRoomRequest request = joinRequestParser.parse(httpRequest.getInputStream().readAllBytes());
         JoinRoomResponse response = roomService.joinRoom(roomCode, request);
-        if (lobby != null) lobby.broadcast(roomCode);
+        lobby.broadcast(roomCode);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 

@@ -1,7 +1,7 @@
 package com.chat.app.dtos;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -19,7 +19,7 @@ class PlayGameResponseTest {
 
         JsonNode json = new ObjectMapper().readTree(new ObjectMapper().writeValueAsString(response));
 
-        assertThat(json.fieldNames()).toIterable().containsExactlyInAnyOrder("roomCode", "numberPlayers", "gameSessionId", "assignments");
+        assertThat(json.propertyNames()).containsExactlyInAnyOrder("roomCode", "numberPlayers", "gameSessionId", "assignments");
         assertThat(json.has("hostId")).isFalse();
         assertThat(json.has("players")).isFalse();
         assertThat(json.path("assignments").get(0).path("playerId").asText()).isEqualTo("p1");

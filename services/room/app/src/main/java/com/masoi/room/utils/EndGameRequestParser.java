@@ -5,13 +5,12 @@ import com.masoi.room.exception.InvalidEndGameRequestException;
 import org.springframework.stereotype.Component;
 import tools.jackson.core.*;
 import tools.jackson.core.json.JsonFactory;
-import tools.jackson.databind.ObjectMapper;
 
 @Component
 public class EndGameRequestParser {
     private final JsonFactory factory;
 
-    public EndGameRequestParser(ObjectMapper ignored) {
+    public EndGameRequestParser() {
         factory = JsonFactory.builder().enable(StreamReadFeature.STRICT_DUPLICATE_DETECTION).build();
     }
 

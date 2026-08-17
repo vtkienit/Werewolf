@@ -30,7 +30,6 @@ class GatewayRouteTests {
 
     private static final DisposableServer ROOM_UPSTREAM = startUpstream();
     private static final DisposableServer DISTRIBUTION_UPSTREAM = startUpstream();
-    private static final DisposableServer WEBSOCKET_UPSTREAM = startUpstream();
 
     @LocalServerPort
     private int gatewayPort;
@@ -39,14 +38,13 @@ class GatewayRouteTests {
     static void upstreamProperties(DynamicPropertyRegistry registry) {
         registry.add("ROOM_SERVICE_URL", () -> upstreamUrl(ROOM_UPSTREAM));
         registry.add("DISTRIBUTION_SERVICE_URL", () -> upstreamUrl(DISTRIBUTION_UPSTREAM));
-        registry.add("WEBSOCKET_SERVICE_URL", () -> upstreamUrl(WEBSOCKET_UPSTREAM));
+        registry.add("CORS_ALLOWED_ORIGINS", () -> "http://localhost");
     }
 
     @AfterAll
     static void stopUpstreams() {
         ROOM_UPSTREAM.disposeNow();
         DISTRIBUTION_UPSTREAM.disposeNow();
-        WEBSOCKET_UPSTREAM.disposeNow();
     }
 
     @Test

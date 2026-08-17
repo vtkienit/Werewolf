@@ -24,11 +24,13 @@ import com.masoi.room.exception.InvalidRoomCodeException;
 import com.masoi.room.model.RoomSnapshot;
 import com.masoi.room.repository.UpdateMaxPlayersRoomStore;
 import com.masoi.room.repository.RoomRepository;
+import com.masoi.room.repository.PlayerAuthStore;
 import com.masoi.room.utils.HostIdGenerator;
 import com.masoi.room.utils.QrUrlFactory;
 import com.masoi.room.utils.RedisRoomLock;
 import com.masoi.room.utils.RoomCodeGenerator;
 import com.masoi.room.utils.RoomLock;
+import com.masoi.room.utils.PlayerIdGenerator;
 import com.masoi.room.dto.response.UpdateMaxPlayersResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -62,7 +64,8 @@ class RoomServiceImplUpdateMaxPlayersTest {
     @BeforeEach
     void setUp() {
         when(lock.acquireOrThrow(anyString())).thenReturn("owner-token");
-        service = new RoomServiceImpl(hosts, codes, repository, qr, lock, store);
+        service = new RoomServiceImpl(hosts, codes, repository, qr, lock, store,
+                mock(PlayerIdGenerator.class), mock(PlayerAuthStore.class));
     }
 
     private RoomSnapshot snapshot(String hostId, int maxPlayers, int playerCount) {
@@ -201,7 +204,8 @@ class RoomServiceImplUpdateMaxPlayersTest {
         RedisRoomLock ownerSafeLock = new RedisRoomLock(redis, () -> "owner-token",
                 new com.masoi.room.config.RoomLockProperties(java.time.Duration.ofMillis(10),
                         java.time.Duration.ofSeconds(10), java.time.Duration.ofMillis(1)));
-        RoomServiceImpl localService = new RoomServiceImpl(hosts, codes, repository, qr, ownerSafeLock, store);
+        RoomServiceImpl localService = new RoomServiceImpl(hosts, codes, repository, qr, ownerSafeLock, store,
+                mock(PlayerIdGenerator.class), mock(PlayerAuthStore.class));
         when(store.read(ROOM_CODE)).thenReturn(snapshot(HOST_ID, 6, 0));
         assertThat(localService.updateMaxPlayers(ROOM_CODE, HOST_ID, 9))
                 .isEqualTo(new UpdateMaxPlayersResponse(9));

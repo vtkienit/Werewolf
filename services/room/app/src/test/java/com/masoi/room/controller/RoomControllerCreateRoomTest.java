@@ -14,7 +14,10 @@ import com.masoi.room.exception.RoomCodeGenerationExhaustedException;
 import com.masoi.room.exception.RoomSerializationException;
 import com.masoi.room.exception.RoomStorageUnavailableException;
 import com.masoi.room.dto.response.CreateRoomResponse;
+import com.masoi.room.service.LobbyService;
 import com.masoi.room.service.RoomService;
+import com.masoi.room.utils.JoinRoomRequestParser;
+import com.masoi.room.utils.ReadyRequestParser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -28,7 +31,9 @@ class RoomControllerCreateRoomTest {
     @BeforeEach
     void setUp() {
         service = mock(RoomService.class);
-        mvc = MockMvcBuilders.standaloneSetup(new RoomController(service, new com.masoi.room.utils.UpdateMaxPlayersRequestParser(new tools.jackson.databind.ObjectMapper())))
+        mvc = MockMvcBuilders.standaloneSetup(new RoomController(service,
+                        new com.masoi.room.utils.UpdateMaxPlayersRequestParser(new tools.jackson.databind.ObjectMapper()),
+                        mock(JoinRoomRequestParser.class), mock(ReadyRequestParser.class), mock(LobbyService.class)))
                 .setControllerAdvice(new GlobalExceptionHandler()).build();
     }
 

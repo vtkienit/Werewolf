@@ -22,7 +22,10 @@ import com.masoi.room.exception.RoomSerializationException;
 import com.masoi.room.exception.RoomStorageUnavailableException;
 import com.masoi.room.exception.RoomUpdateBusyException;
 import com.masoi.room.dto.response.UpdateMaxPlayersResponse;
+import com.masoi.room.service.LobbyService;
 import com.masoi.room.service.RoomService;
+import com.masoi.room.utils.JoinRoomRequestParser;
+import com.masoi.room.utils.ReadyRequestParser;
 import com.masoi.room.utils.UpdateMaxPlayersRequestParser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -42,7 +45,8 @@ class RoomControllerUpdateMaxPlayersTest {
     void setUp() {
         service = mock(RoomService.class);
         UpdateMaxPlayersRequestParser parser = new UpdateMaxPlayersRequestParser(new ObjectMapper());
-        mvc = MockMvcBuilders.standaloneSetup(new RoomController(service, parser))
+        mvc = MockMvcBuilders.standaloneSetup(new RoomController(service, parser,
+                        mock(JoinRoomRequestParser.class), mock(ReadyRequestParser.class), mock(LobbyService.class)))
                 .setControllerAdvice(new GlobalExceptionHandler())
                 .build();
     }

@@ -7,7 +7,7 @@ vi.mock("@stomp/stompjs", () => ({
     onConnect: () => void = () => {}; options: any
     constructor(options: any) { this.options = options; state.clients.push(this) }
     activate = vi.fn(); deactivate = vi.fn().mockResolvedValue(undefined)
-    subscribe = vi.fn((_destination: string, _callback: (message: { body: string }) => void, _headers?: Record<string, string>) => ({ unsubscribe: vi.fn() }))
+    subscribe = vi.fn(() => ({ unsubscribe: vi.fn() }))
     publish = vi.fn()
   },
 }))

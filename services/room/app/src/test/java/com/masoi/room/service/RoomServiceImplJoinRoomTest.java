@@ -8,7 +8,6 @@ import static org.mockito.Mockito.*;
 
 import com.masoi.room.dto.request.JoinRoomRequest;
 import com.masoi.room.dto.response.JoinRoomResponse;
-import com.masoi.room.exception.PlayerNameAlreadyExistsException;
 import com.masoi.room.exception.PlayerIdGenerationExhaustedException;
 import com.masoi.room.exception.JoinRoomSerializationException;
 import com.masoi.room.exception.JoinRoomNotFoundException;
@@ -16,6 +15,7 @@ import com.masoi.room.exception.RoomStorageUnavailableException;
 import com.masoi.room.exception.RoomPlayingException;
 import com.masoi.room.model.RoomSnapshot;
 import com.masoi.room.repository.RoomRepository;
+import com.masoi.room.repository.PlayerAuthStore;
 import com.masoi.room.repository.UpdateMaxPlayersRoomStore;
 import com.masoi.room.utils.*;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,7 +34,7 @@ class RoomServiceImplJoinRoomTest {
     void setUp() {
         when(lock.acquireOrThrow("A7K9Q2")).thenReturn("token");
         service = new RoomServiceImpl(mock(HostIdGenerator.class), mock(RoomCodeGenerator.class), repository,
-                mock(QrUrlFactory.class), lock, mock(UpdateMaxPlayersRoomStore.class), ids);
+                mock(QrUrlFactory.class), lock, mock(UpdateMaxPlayersRoomStore.class), ids, mock(PlayerAuthStore.class));
     }
 
     @Test
