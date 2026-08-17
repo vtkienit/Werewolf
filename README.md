@@ -112,5 +112,3 @@ Werewolf/
 ├── .env.example
 └── docker-compose.yml
 ```
-
-> Do not commit `.env`, real tokens, or runtime data to Git.
