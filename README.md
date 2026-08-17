@@ -1,41 +1,41 @@
 # Werewolf
 
-Ứng dụng hỗ trợ quản trò tổ chức một ván Ma Sói trực tiếp: tạo phòng, mời người chơi, cập nhật sảnh chờ theo thời gian thực, cấu hình vai và chia vai bí mật.
+A web application for running in-person Werewolf games: create rooms, invite players, update the lobby in real time, configure roles, and distribute secret roles.
 
-## Thành phần
+## Components
 
-- `frontend/app`: React + TypeScript + Vite.
-- `api-gateway`: cổng truy cập chung cho REST API và WebSocket, chạy ở port `8080`.
-- `services/room/app`: quản lý phòng, người chơi và realtime, chạy ở port `8081`.
-- `services/distribution/app`: cấu hình và phân chia vai, chạy ở port `8082`.
-- Redis: lưu trạng thái phòng, phiên người chơi và room lock, chạy ở port `6379`.
+- `frontend/app`: React, TypeScript, and Vite.
+- `api-gateway`: shared entry point for the REST API and WebSocket, running on port `8080`.
+- `services/room/app`: manages rooms, players, and realtime events, running on port `8081`.
+- `services/distribution/app`: configures and distributes roles, running on port `8082`.
+- Redis: stores room state, player sessions, and room locks, running on port `6379`.
 
 ```text
 Frontend -> API Gateway -> Room Service --------> Redis
                        -> Distribution Service -> Redis
 ```
 
-## Yêu cầu
+## Requirements
 
-- Docker Desktop để chạy Redis hoặc toàn bộ hệ thống.
+- Docker Desktop to run Redis or the full application.
 - JDK 21.
-- Node.js 20+ và npm.
+- Node.js 20+ and npm.
 
-Không cần cài Maven vì các backend service đã có Maven Wrapper.
+Maven does not need to be installed because every backend service includes Maven Wrapper.
 
-## Cấu hình
+## Configuration
 
-Tạo `.env` từ file mẫu tại thư mục gốc:
+Create `.env` from the example file in the project root:
 
 ```powershell
 Copy-Item .env.example .env
 ```
 
-Đổi `INTERNAL_REALTIME_TOKEN` trong `.env` thành một chuỗi bí mật. Các service và Vite sẽ tự đọc file `.env` này.
+Replace `INTERNAL_REALTIME_TOKEN` in `.env` with a secure secret. The backend services and Vite load this file automatically.
 
-## Chạy từng service để phát triển
+## Run Services for Development
 
-Mở một terminal riêng cho mỗi bước và chạy từ thư mục gốc dự án.
+Open a separate terminal for each step and run the commands from the project root.
 
 ### 1. Redis
 
@@ -72,26 +72,26 @@ npm ci --legacy-peer-deps
 npm run dev
 ```
 
-Mở [http://localhost:5173](http://localhost:5173) để sử dụng ứng dụng. REST API và WebSocket đều đi qua Gateway tại `http://localhost:8080`.
+Open [http://localhost:5173](http://localhost:5173) to use the application. The REST API and WebSocket are available through the Gateway at `http://localhost:8080`.
 
-## Chạy toàn bộ bằng Docker
+## Run Everything with Docker
 
 ```powershell
 docker compose up --build
 ```
 
-Với cấu hình trong `.env.example`:
+Using the values from `.env.example`:
 
 - Frontend: [http://localhost:5173](http://localhost:5173)
 - API Gateway: [http://localhost:8080](http://localhost:8080)
 
-Dừng toàn bộ hệ thống:
+Stop all containers:
 
 ```powershell
 docker compose down
 ```
 
-## Kiểm thử
+## Tests
 
 ```powershell
 .\services\room\app\mvnw.cmd -f services/room/app/pom.xml test
@@ -101,7 +101,7 @@ npm --prefix frontend/app test
 npm --prefix frontend/app run build
 ```
 
-## Cấu trúc chính
+## Project Structure
 
 ```text
 Werewolf/
@@ -113,4 +113,4 @@ Werewolf/
 └── docker-compose.yml
 ```
 
-> Không commit file `.env`, token thật hoặc dữ liệu runtime lên Git.
+> Do not commit `.env`, real tokens, or runtime data to Git.
